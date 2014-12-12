@@ -1,4 +1,5 @@
 require "counter/cache/version"
+require "counter/cache/active_record_reader"
 require "counter/cache/active_record_updater"
 require "counter/cache/options_parser"
 require "counter/cache/config"
@@ -22,7 +23,13 @@ module Counter
           after_create ActiveRecordUpdater.new(options)
           after_destroy ActiveRecordUpdater.new(options)
         end
+
+      attribute_method_prefix 'counter_cache_'
       end
+    end
+
+    def counter_cache_attribute(attr)
+      ActiveRecordReader.new(self, attr).get
     end
   end
 end
